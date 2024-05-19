@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porfalio - Fran</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <img class="image" src="assets/perfil.png" alt="">
+
+        <h1>Hi, I am Francisco</h1>
+        <h3>Web Dev Student</h3>
+
+
+    </div>
+    <div id="spotify-info">
+        <div id="track-info">
+            <img id="album-art" src="" alt="Portada del álbum">
+            <p id="song-name">Nombre de la canción</p>
+            <p id="artist">Nombre del artista</p>
+            <img id="play" src="assets/musica.png" alt="play">
+        </div>
+    </div>
+
+    <script>
+        async function getCurrentlyPlaying() {
+            try {
+                const response = await fetch('https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=FranRod24&api_key=32f6ac583541cd2673788d536da4b770&format=json&limit=1');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching currently playing track:', error);
+            }
+        }
+
+        async function updateCurrentlyPlaying() {
+            const recentTracks = await getCurrentlyPlaying();
+            if (recentTracks && recentTracks.recenttracks && recentTracks.recenttracks.track.length > 0) {
+                const track = recentTracks.recenttracks.track[0];
+                const { name, artist, image } = track;
+                document.getElementById('song-name').textContent = '' + name;
+                document.getElementById('artist').textContent = '' + artist['#text'];
+                document.getElementById('album-art').src = image[3]['#text'];
+            } else {
+                document.getElementById('song-name').textContent = 'No estoy escuchando nada';
+                document.getElementById('artist').textContent = '';
+                document.getElementById('album-art').src = 'https://upload.wikimedia.org/wikipedia/commons/7/71/Spotify.png';
+            }
+        }
+
+        setInterval(updateCurrentlyPlaying, 5000);
+
+        updateCurrentlyPlaying();
+    </script>
+
+</body>
+</html>
